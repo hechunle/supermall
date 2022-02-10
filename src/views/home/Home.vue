@@ -6,8 +6,9 @@
     <home-swiper :banners="banners"/>
     <ReCommonView :recommends="recommends"/>
     <feature-view/>
-    <TabControl class="tab-control" :title="['流行','新款','精选']"/>
-    <GoodList/>
+    <TabControl class="tab-control" :title="['流行','新款','精选']" @tabClick="tabClick"/>
+<!--    <GoodListItem :goodsItem="goods['list']"/>-->
+    <good-list :goods="goods['list']"></good-list>
     <ul>
       <li>列表</li>
       <li>列表</li>
@@ -123,6 +124,7 @@ import FeatureView from "@/views/home/childComps/FeatureView";
 import TabControl from "@/components/content/tabControl/TabControl";
 
 import GoodList from "@/components/content/goods/GoodList";
+import GoodListItem from "@/components/content/goods/GoodListItem";
 
 import {getHomeMultidata, getHomeGoods} from "@/network/home";
 
@@ -136,7 +138,8 @@ export default {
     ReCommonView,
     FeatureView,
     TabControl,
-    GoodList
+    GoodList,
+    GoodListItem
 
   },
   data() {
@@ -144,7 +147,9 @@ export default {
       banners: [],
       recommends: [],
       goods: {
-       'page':0
+       'page':0,
+        'list':[
+        ]
       }
     }
   },
@@ -153,6 +158,9 @@ export default {
     this.getHomeGoods()
   },
   methods: {
+    tabClick(index){
+      console.log(index);
+    },
     getHomeMultidata() {
       getHomeMultidata().then(res => {
         this.banners = res.data.banner.list,
@@ -160,10 +168,10 @@ export default {
       })
     },
     getHomeGoods() {
-      const page=this.goods[page]+1
+      const page=this.goods['page']+1
       getHomeGoods(page).then(res => {
         this.goods[page] += 1
-        console.log(res)
+        this.goods['list'].push(res.data.banner.list)
       })
     }
 
